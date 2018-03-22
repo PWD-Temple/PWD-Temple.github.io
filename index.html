@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+	
+<!-- Mirrored from duspviz.mit.edu/d3-workshop/mapping-data-with-d3/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 12 Mar 2018 14:19:32 GMT -->
+<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>Temple University Workshop</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://duspviz.mit.edu/_assets/css/bootstrap.min.css">
+		<!--[if lt IE 9]>
+			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+    <link rel="stylesheet" href="http://duspviz.mit.edu/_assets/lib/scrolling-nav.css">
+		<link rel="stylesheet" href="http://duspviz.mit.edu/_assets/css/styles.css">
+    <link rel="stylesheet" href="http://duspviz.mit.edu/_assets/lib/prism.css">
+	</head>
+	<body>
+
+
+
+<!--main-->
+<div class="container">
+  <div class="row">
+<!--right--><div class="col-md-9">
+	<div id="header">
+		<h1>D3 Workshop Series </h1>
+	    <h2>Mapping Data with D3</h2>
+	    <h4><span class="subtitle">MIT Computation | <a href="mailto:csandova@mit.edu?Subject=Temple University Workshop" target="_top">Carlos Sandoval Olascoaga</a></h4>
+	</div>
+	<div id="wrapper">
+		<hr>
+		<p>Session Objectives</p>
+		<h4>Part 1: D3 Mapping from the Ground Up</h4>
+		<ul>
+			<li>Understand how D3 can be used out of the box for mapping</li>
+			<li>Create a basic D3 map</li>
+			<li>Show interactivity with event listeners</li>
+			<li>Use a Range Slider to change data attributes</li>
+		</ul>
+		<h4>Part 2: Using TopoJSON and 'Joining Data'</h4>
+		<ul>
+			<li>Introduce TopoJSON</li>
+			<li>Show how to work with TopoJSON</li>
+			<li>Explore how Joining Data works</li>
+		</ul>
+		<hr>
+		<h3>D3 and Web Mapping: Map your Data!</h3>
+		<p>It might not surprise you, given the robust visualization capabilities of D3, that it is also great for creating interactive web maps and mapping datasets. Mapping in D3, in fact, is easier than you might think. Drawing a basic map doesn't take any more code than a bar chart, line chart, or scatter plot. Web mapping in D3 can allow for animation, visualization, and interaction. You can also coordinate charts and plots with your map. As we go along, you will learn D3 supports topology and even projections, making it very powerful! In this session, let's introduce mapping with D3 by going over some fundamentals, getting some data on the map, and then showing one example of how we can do a time slider interaction. Lastly, we'll look at TopoJSON, a GeoJSON that supports topology, and some examples of choropleth maps and how you can create those.</strong></p>
+		<p><strong>The examples for today are found in the <em>d3-examples</em> folder.</strong></p>
+		<p>The map below is a nice example of a <a href="http://bl.ocks.org/mbostock/4060606">choropleth map from Mike Bostock</a>, the creator of D3. It uses a number of features you might be familiar with if you have done some web mapping. The county geometry is stored as a JSON (a <a href="https://github.com/mbostock/topojson/wiki">TopoJSON</a> in fact, but more on this later...), and the data in a Tab-separated format (TSV). The rest of the implementation is D3 JavaScript. One important observation, note that the map is not in a <a href="https://en.wikipedia.org/wiki/Web_Mercator">Web Mercator projection</a>, but rather an <a href="https://en.wikipedia.org/wiki/Albers_projection">Albers projection</a>. D3 has a large built in <a href="https://github.com/mbostock/d3/wiki/Geo-Projections">projection library</a> that you can reference when mapping data. To see the code behind, view the example on its own and view source.</p>
+		<div class="text-center">
+			<iframe scrolling="no" width="720" height="500" src="http://duspviz.mit.edu/d3-workshop/examples/session4/us_employment_example.html"></iframe>
+			<div class="caption" style="text-align: center">
+				<small><a href="http://bl.ocks.org/mbostock/4060606">(View this on bl.ocks.)</a></small></h5>
+			</div>
+		</div>
+		<h4>So how does this work?</h4>
+		<p>The following tutorial will explore, in two parts, how mapping works with D3.</p>
+		<hr>
+		<h3>Part 1: D3 Mapping from the Ground Up</h3>
+		<p>Open a new blank page in your text editor. We'll write our D3 map code here. Let's start a bit more simple and revisit our rat example and create a basic map of Boston neighborhoods. This will let us see what is happening under the hood, and we can learn some of the fundamentals and build from them to create better maps and spatial visualizations. To start, we'll create the following.</p>
+		<div class="text-center">
+			<iframe scrolling="no" width="700" height="580" src="http://duspviz.mit.edu/d3-workshop/examples/session4/example1.html"></iframe>
+			<div class="caption" style="text-align: center">
+				<h5>A Simple D3 Map: Boston Neighborhoods </h5>
+			</div>
+		</div>
+		<hr>
+		<p>Let's get going! <strong>Start up your Localhost server in the "d3-examples" folder located in your downloaded files.</strong></p>
+		<p>In your blank document, input the following.</p>
+		<h4>1. HTML Template</h4>
+		<p>A simple HTML template for our page.</p>
+		<pre><code class="language-markup">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+	&lt;title&gt;Mapping with D3&lt;/title&gt;
+	&lt;script src="http://d3js.org/d3.v4.min.js" charset="utf-8"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;!-- Page elements and content go here. --&gt;
+	&lt;script&gt;
+		// Our D3 code will go here.
+	&lt;/script&gt;	
+&lt;/body&gt;
+&lt;/html&gt;</pre></code>
+		<hr>
+		<h4>2. Load the Geographic Dataset</h4>
+		<p>Load the GeoJSON file of Boston neighborhoods into our document. Make sure the path is correct.</p>
+		<pre data-line="6"><code class="language-markup">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+	&lt;title&gt;Mapping with D3&lt;/title&gt;
+	&lt;script src="http://d3js.org/d3.v4.min.js" charset="utf-8"&gt;&lt;/script&gt;
+	&lt;script src="data/boston_neighborhoods.json"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;!-- Page elements and content go here. --&gt;
+	&lt;script&gt;
+		// Our D3 code will go here.
+	&lt;/script&gt;	
+&lt;/body&gt;
+&lt;/html&gt;</pre></code>
+		<hr>
+		<h4>2. Create the SVG Canvas</h4>
+		<p>Between the script tags, add the following to create our SVG canvas.</p>
+<pre><code class="language-javascript">// Width and Height of the whole visualization
+var width = 700;
+var height = 580;
+
+// Create SVG
+var svg = d3.select( "body" )
+    .append( "svg" )
+    .attr( "width", width )
+    .attr( "height", height );
+
+// Append empty placeholder g element to the SVG
+// g will contain geometry elements
+var g = svg.append( "g" );</code></pre>
+		<hr>
+		<h4>3. Projections</h4>
+		<h5>D3, Projections, and GeoJSON</h5>
+		<p>D3 has some internal functionality that can turn GeoJSON data into screen coordinates based on the projection you set. This is not unlike other libraries such as Leaflet, but the result is much more open-ended, not constrained to shapes on a tiled Mercator map.</a> So, yes, D3 supports projections. Jason Davies has a fantastic illustration of various projections in <a href="http://www.jasondavies.com/maps/transition/">this example</a>.</p>
+		<p>D3 has a handful of <a href="https://github.com/mbostock/d3/wiki/Geo-Projections" target="_blank">projections built in</a>, but there are tons more supported in an <a href="https://github.com/d3/d3-geo-projection/">external plugin</a>.</p>
+		<h4>Projections Example</h4>
+		<p>In the example folder for the week, you will find a file named <strong>"projection-example.html"</strong>. This is a simple world-wide map in which we can change projection properties and see how it will affect the look of our map and distortion of each of the countries. Open it up and play with the parameters. View the map in your browser to see the changes in action.</p>
+		<div class="text-center">
+			<img src="http://duspviz.mit.edu/_assets/img/conic_equidistant.png" width="720px"></a>
+			<div class="caption" style="text-align: center">
+				<h5>Projections Example - Conic Equidistant<br></h5>
+			</div>
+		</div>
+		<p>In our example, we set properties for our projection by passing them to a projection object (<a href="https://github.com/mbostock/d3/wiki/Geo-Projections#albers">d3.geoAlbers()</a>) and save them as a variable. We can refer to this when we use the D3 object for generating map linework. The properties are <strong>scale</strong>, <strong>rotate</strong>, <strong>center</strong>, and <strong>translate</strong>.</p>
+		<ul>
+			<li><strong>Scale</strong> sets the scale of the map (ie 1 is the smallest, the larger the numbr the more zoomed in you are, you can fiddle with this until it works). Rotate and center set parameters for the project. A full global map fits nicely around 100. The extent of Boston lands at about 190000 with our extents.</li>
+			<li><strong>Rotate</strong> the map sets the longitude of origin for our Albers projection. <strong>Center</strong> sets a single standard parallel at 42.313, about the latitude of Boston.</li>
+			<li>Lastly, <strong>translate</strong> is a pixel offset, commonly specified to ensure that the center of the projection is in the center of the viewing area.</li>
+		</ul>
+		<p>This centers our map on Boston, zooming it into the extent of the city.</p>
+<pre><code class="language-javascript">// Width and Height of the whole visualization
+// Set Projection Parameters
+var albersProjection = d3.geoAlbers()
+    .scale( 190000 )
+    .rotate( [71.057,0] )
+    .center( [0, 42.313] )
+    .translate( [width/2,height/2] );</code></pre>
+  		<hr>
+		<h4>4. Set up the Path Generator</h4>
+		<h5>Path Generators - Geo Paths</h5>
+		<p>Next in our code, we create something called a Path Generator, or Geo Path. The primary mechanism for displaying data in D3 is <a href="https://github.com/mbostock/d3/wiki/Geo-Paths">d3.geoPath</a>. This class is similar to d3.svg.line and the other SVG shape generators: given a geometry or feature object, it generates the path data string suitable for the "d" attribute of an SVG path element.</p>
+		<p>Basically, the Geo Path generator is a function. One of the methods it takes is the projection you define. It reads lat/lon coordinates from a GeoJSON feature, algorithmically turns them into screen coordinates according to your specification in the projection method, and returns an SVG path string. This can then be drawn on your screen. We set the parameters in our code already, so this code is simple.</p>
+<pre><code class="language-javascript">// Create GeoPath function that uses built-in D3 functionality to turn
+// lat/lon coordinates into screen coordinates
+var geoPath = d3.geoPath()
+    .projection( albersProjection );</pre></code>
+    	<hr>
+		<h4>5. Bind the Data to the SVG Canvas</h4>
+    	<h5>Classic D3 Binding - Use GeoPath</h5>
+    	<p>The rest is just back to regular D3, use a selector for the elements, load the data from the JSON, bind it to the SVG using enter and append, the apply styling. The one part that might be confusing is the setting of the <strong>d</strong> attribute. This is the attribute that defines the coordinates of a path. We pass a function to it that draws the path according to the coordinates defined by the function, and the coordinates are provided by our GeoJSON.</p>
+<pre><code class="language-javascript">// Classic D3... Select non-existent elements, bind the data, append the elements, and apply attributes
+g.selectAll( "path" )
+    .data( neighborhoods_json.features )
+    .enter()
+    .append( "path" )
+    .attr( "fill", "#ccc" )
+    .attr( "stroke", "#333")
+    .attr( "d", geoPath );</pre></code>
+    	<p>Using a GeoJSON of Boston Neighborhoods, The result is the following map. Set up your map with only one layer, then the rest comes easy.</p>
+		<div class="text-center">
+			<iframe scrolling="no" width="700" height="580" src="http://duspviz.mit.edu/d3-workshop/examples/session4/example1.html"></iframe>
+			<div class="caption" style="text-align: center">
+				<h5>GeoJSON Bound to SVG - Boston Neighborhoods </h5>
+			</div>
+		</div>
+		<hr>
+		<h3>Add Data to your Map</h3>
+		<p>To add data to the map, follow the process above and repeat it. Let's make a map using our sample rodent incident dataset.</p>
+		<h4>Rodents! Using 311 Data</h4>
+		<p>For a sample dataset, in the materials, there is a dataset named <strong>boston_rodents.json</strong>. This is a JSON dataset of rodent incidents based on 311 data from the <a href="https://data.cityofboston.gov/">Boston Open Data portal</a>.</p>
+		<p>To add this to our map, it is a two step process. It follows the exact same principles of the previous step, except we do not have to set up our projection information or create the map. Note, we are actually loading JSON files into our document in the head. This is another method of getting a JSON element into your document, the benefit is that it doesn't require a HTTP call. You could also use <a href="https://github.com/mbostock/d3/wiki/Requests#d3_json" target="_blank">d3.json</a> to do this, just like we've done with the CSV data in the previous problem sets.</p>
+		<p><strong>1. Link the Data to your Document</strong> - In your HTML, in the head section <strong>NOT</strong> the script, link to the <strong>boston_rodents.json</strong> dataset as follows. It should go right below the link to the neighborhoods dataset.</p>
+		<pre><code class="language-markup">&lt;script src="data/boston_rodents.json"&gt;&lt;/script&gt;</pre></code>
+		<p><strong>2. Add the Data</strong> - Using the same method as before, add the dataset. In your D3 script, place the following at the bottom, beneath where we load the neighborhoods.</p>
+		<pre><code class="language-javascript">var rodents = svg.append( "g" );
+
+rodents.selectAll( "path" )
+	.data( rodents_json.features )
+	.enter()
+	.append( "path" )
+	.attr( "fill", "#900" )
+	.attr( "stroke", "#999" )
+	.attr( "d", geoPath );</pre></code>
+		<p>We use the same method, and we can use the same Path Generator (geoPath). Save and refresh. Our rodent data from the City of Boston is now added to the map!</p>
+		<div class="text-center">
+			<iframe scrolling="no" width="700" height="580" src="http://duspviz.mit.edu/d3-workshop/examples/session4/example2.html"></iframe>
+			<div class="caption" style="text-align: center">
+				<h5>Rodents In Boston <small><br>Data Source: <a href="https://data.cityofboston.gov/">City of Boston Open Data</a></small></h5>
+			</div>
+		</div>
+		<h4>Changing the Point Symbol</h4>
+		<p>Now, we are using a default point symbol that we gave a fill and stroke to so we can see it. We could specify a radius if we wanted, or we could change this and create custom symbols.</p>
+		<p>To change the color of the point, there are two ways of doing this. You can change the properties of the page element using D3 javascript, or alternately, you can write CSS and create a class. To complete the latter method, we need to do two simple things to the code. First, add some CSS styling to the head of your document. In the head section, enter the following. This will create an element class called "incident".</p>
+		<pre><code class="language-markup">&lt;style&gt;
+	.incident {
+        fill: steelblue;
+    }
+&lt;/style&gt;</pre></code>
+		<p>Next, we need to apply the class 'incident' to our data. To complete this, locate the data loading method from the step above, and add a single line of code. Make sure you put it before the end semi-color. Enter the following.</p>
+<pre data-line="8"><code class="language-javascript">rodents.selectAll( "path" )
+	.data( rodents_json.features )
+	.enter()
+	.append( "path" )
+	.attr( "fill", "#900" )
+	.attr( "stroke", "#999" )
+	.attr( "d", geoPath )
+	.attr( "class", "incident");</pre></code>
+		<p>Save and refresh your map. You'll see the CSS properties applied to data elements.</p>
+		<div class="text-center">
+			<iframe scrolling="no" width="700" height="580" src="http://duspviz.mit.edu/d3-workshop/examples/session4/example3.html"></iframe>
+			<div class="caption" style="text-align: center">
+				<h5>Rodents In Boston (blue point symbols) <small><br>Data Source: <a href="https://data.cityofboston.gov/">City of Boston Open Data</a></small></h5>
+			</div>
+		</div>
+		<hr>
+		<h3>Adding Map Interaction</h3>
+		<p>Once you understand how you load data into D3, adding interaction to your map is actually quite easy. Simply put, you use D3 to change the properties of page elements and incorporate event listeners, such as mouseovers and clicks. To illustrate this, lets set up our map of rodent incidents to display some information, like an address, when you interact with the map. For the example, lets set it up to show a property of the data when you hover over an incident.</p>
+		<p>In addition to our map title, we can add an element that will hold some information that can change when we hover over an incident. We will style this with the CSS we added in the last step, adding a line of code or two. Stay in our current file for these additions.</p>
+		<p><strong>1. Add Page Elements</strong></p>
+		<p>To start, we need page elements that can be populated to hold a title and some popup information on our map. The concept is that we want to create a page element that we can update the language in according to a data value. Put these in the <strong>body</strong> section, above the script tags (not in between them!).</p>
+		<pre><code class="language-markup">&lt;h1&gt;Rodent Incidents in Boston&lt;/h1&gt;
+&lt;h2&gt;&lt;/h2&gt;</pre></code>
+		<p><strong>2. Add Event Listeners and Change Properties of Page Attibutes by adding Classes</strong></p>
+		<p>To start, we need page elements that can be populated to hold a title and some popup information on our map. The concept is that we want to create a page element that we can update the language in according to a data value. To do this, we can append the following lines of code to the end of the rodents.selectAll("path") method. <strong>Make you remove the semi-colon and only have one at the end of the chained selectAll("path) method.</strong></p>
+<pre data-line="9-16"><code class="language-javascript">rodents.selectAll( "path" )
+	.data( rodents_json.features )
+	.enter()
+	.append( "path" )
+	.attr( "fill", "#900" )
+	.attr( "stroke", "#999" )
+	.attr( "d", geoPath )
+	.attr( "class", "incident")
+	.on("mouseover", function(d){
+		d3.select("h2").text(d.properties.LOCATION_STREET_NAME);
+		d3.select(this).attr("class","incident hover");
+	})
+	.on("mouseout", function(d){
+		d3.select("h2").text("");
+		d3.select(this).attr("class","incident");
+	});</pre></code>
+		<p>Note the mouseover and mouseout event listeners, and the changing of the classes.</p>
+		<p><strong>3. Update the Cascading Style Sheets</strong></p>
+		<p>Lastly, update the style sheets to change colors and set fonts and other style elements. Replace the entire block in the style tags with the following. This will simply position some of the elements on our page, and provide some simple styling.</p>
+		<pre><code class="language-css">body {
+    position: absolute;
+    font-family: "Proxima Nova", "Montserrat", sans-serif;
+}
+h1, h2 {
+    position: absolute;
+    left: 10px;
+    font-size: 1.3em;
+    font-weight: 100;
+}
+h2 {
+    top: 30px;
+    font-size: 1em;
+}
+.incident {
+    fill: steelblue;
+}
+.hover {
+    fill: yellow;   
+}</pre></code>
+		<p>Our map, with this new code added, and some nice new interactivity. It should look like the following. See the page source for the full example.</p>
+		<div class="text-center">
+			<iframe scrolling="no" width="700" height="590" src="http://duspviz.mit.edu/d3-workshop/examples/session4/boston-hover-map.html"></iframe>
+			<div class="caption" style="text-align: center">
+				<h5>Interactivity! Rodents In Boston <small><br>Data Source: <a href="https://data.cityofboston.gov/">City of Boston Open Data</a></small></h5>
+			</div>
+		</div>
+		<p>We have a map, and we can hover features and view properties.</p>
+		<hr>
+		<h3>Using Update and Add a Time Swiper</h3>
+		<p>Let's continue to animate our map by adding some additional user interaction, showing Boston rodent incidents by month over the years the data was collected. Our map will look like the following.</p>
+		<div class="text-center">
+			<iframe scrolling="no" width="700" height="650" src="http://duspviz.mit.edu/d3-workshop/examples/session4/boston-slider-map.html"></iframe>
+			<div class="caption" style="text-align: center">
+				<h5>Slider Map - Rodent Incidents by Month, 311 Reports <small><br>Data Source: <a href="https://data.cityofboston.gov/">City of Boston Open Data</a></small></h5>
+			</div>
+		</div>
+		<p>To get a slider on our map, we can use a couple of different HTML features. The steps we take will be the following.</p>
+		<ol>
+			<li>Add Time Slider HTML Component</li>
+			<li>Position the Component</li>
+			<li>Create global variables for Time Slider input and Months of the Year</li>
+			<li>Write Update Function that gets Value from Slider and sets Attribute</li>
+			<li>Write function (dateMatch) that returns a Color</li>
+			<li>Set Initial State of Map</li>
+		</ol>
+		<h4>1. Add Time Slider HTML Component</h4>
+		<p>To start, let's add a time slider component to our map. HTML5 has a <a href="http://www.w3schools.com/jsref/dom_obj_range.asp" target="_blank">nice built in range slider</a> we can use. This slider has parameters that can be set that declare the range and steps the slider takes within that range. In the body of your page, above your script tags but below your headers, add the range input. Put it in a new <strong>div</strong> and call it <em>sliderContainer</em>. Give the range input an id of <strong>timeslide</strong> and the span element an id of <strong>range</strong>.</p>
+		<pre><code class="language-markup">&lt;div id="sliderContainer"&gt;
+    &lt;input id="timeslide" type="range" min="0" max="11" value="0" step="1"/>&lt;br&gt;
+    &lt;span id="range"&gt;January&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+		<p>This will place a range input component in our document. Because we are looking at months, our max value will be 11, and our step will be 1.</p>
+		<h4>2. Position the Component</h4>
+		<p>Let's adjust the CSS a bit now to position the component. Also, let's remove the color we set for the <strong>incidents</strong> class. We will set the color based on the input from the slider, not in the CSS here. Because we named our <strong>div</strong> <em>sliderContainer</em>, we can style it in the CSS.</p>
+		<p><strong>IMPORTANT: Remove the CSS for the Incidents class. Otherwise it will override things</strong></p>
+<pre data-line="15, 19-24"><code class="language-css">body {
+    position: absolute;
+    font-family: "Proxima Nova", "Montserrat", sans-serif;
+}
+h1, h2 {
+    position: absolute;
+    left: 10px;
+    font-size: 1.3em;
+    font-weight: 100;
+}
+h2 {
+    top: 30px;
+    font-size: 1em;
+}
+/* REMOVE .incident FILL CSS */
+.hover {
+    fill: yellow;   
+}
+/* ADD CSS FOR #sliderContainer */
+#sliderContainer {
+    text-align: center;
+    position: relative;
+    top: 600px;
+}</code></pre>
+		<p>Our slider will now be at the bottom of our map, top at 600px from the top relative to the container.</p>
+		<h4>3. Create Global Variables</h4>
+		<p>We now want two global variables, one that will hold the input value received from the time slider, we can call it <strong>inputValue</strong> and one that holds an array (<strong>months</strong>) that represents what the input values mean. For example, since position 0 in our slider represents January, we can write an array that returns "January" when we call <strong>months[0]</strong>, with 0 being the inputValue.</p>
+		<p>Here are the variables, <strong>put this in your script at the top, outside of any functions</strong>.</p>
+
+<pre><code class="language-javascript">var inputValue = null;
+var month = ["January","February","March","April","May","June","July","August","September","October","November","December"];</code></pre>
+
+		<p>These variables will handle our inputs and help us with the slider values.</p>
+		<h4>4. Write an <strong>Update</strong> function and <strong>timeslide</strong> event listenter</h4>
+		<p>Next, we need to write two pieces of code, one that listens for when the value of the time slider changes, and one that updates the SVG elements. We are going to use some D3 code to listen for an input change on the <strong>#timeslide</strong> element, and then pass the value to a function named <strong>update</strong> that will use a <em>selectAll</em> on incidents to update the fill. When we change the slider position, it will change the month. We'll also set the <em>range</em> element to show the month, so the user can see it.</p>
+		<p><strong>Put this at the end of the script, making sure you are within the script tags.</strong></p>
+
+<pre><code class="language-javascript">// when the input range changes update the value 
+d3.select("#timeslide").on("input", function() {
+    update(+this.value);
+});
+
+// update the fill of each SVG of class "incident" with value
+function update(value) {
+    document.getElementById("range").innerHTML=month[value];
+    inputValue = month[value];
+    d3.selectAll(".incident")
+        .attr("fill", dateMatch);
+}</code></pre>
+
+		<p>You'll notice we set fill to be 'dateMatch'. This is a function that will check the inputValue for a match in the data, then return a color if there is a match. Let's write that up in the next step</p>
+		<h4>5. Write Function to Return a Color</h4>
+		<p>Our color return function will look like the following. It takes our data and a value as arguments, grabs the open date of the incident from the dataset and sets it to a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">JavaScript data object</a> and gets the month, then checks the inputValue against the month. If there is a match, it returns <strong>red</strong>, it not, <strong>grey (#999)</strong>. We also use <strong>this.parentElement.appendChild(this)</strong> to help with layering. The way D3 draws is in order of drawing, so this appends the current element to the parent, making it draw last. Check it out, add this to your script.</p>
+
+<pre><code class="language-javascript">function dateMatch(data, value) {
+    var d = new Date(data.properties.OPEN_DT);
+    var m = month[d.getMonth()];
+    if (inputValue == m) {
+        this.parentElement.appendChild(this);
+        return "red";
+    } else {
+        return "#999";
+    };
+}</code></pre>
+
+		<p>Note in the function, that all this does is return a color we can set to our D3 attribute fill.</p>
+		<h4>6. Set the Initial State</h4>
+		<p>Lastly, when the map loads, we want our intial map state to be set to January. To accomplish this, write up an <strong>initialDate</strong> function that returns a color based on month match, and the sets the fill in the path creation to <strong>initialDate</strong>. When the user visits, they will see incidents filed in January on the map. Put this at the bottom of your script.</p>
+
+<pre><code class="language-javascript">function initialDate(d,i){
+    var d = new Date(d.properties.OPEN_DT);
+    var m = month[d.getMonth()];
+    if (m == "January") {
+        this.parentElement.appendChild(this);
+        return "red";
+    } else {
+        return "#999";
+    };
+}</code></pre>
+
+		<p>Once this is in your script, call it in your <strong>path creation method</strong>. Set the fill to be the return of the initialDate function</p>
+
+<pre data-line="5"><code class="language-javascript">rodents.selectAll( "path" )
+    .data( rodents_json.features )
+    .enter()
+    .append( "path" )
+    .attr("fill", initialDate)
+    .attr("stroke", "#ccc")
+    .attr("d", geoPath)
+    .attr("class","incident")
+    .on("mouseover", function(d){
+        d3.select("h2").text(d.properties.LOCATION_STREET_NAME);
+        d3.select(this).attr("class","incident hover");
+    })
+    .on("mouseout", function(d){
+        d3.select("h2").text("");
+        d3.select(this).attr("class","incident");
+    });</code></pre>
+
+    <p>Save and refresh your map. Test out your slider! Take a look at the source if you are having trouble.</p>
+    <div class="text-center">
+			<iframe scrolling="no" width="700" height="650" src="http://duspviz.mit.edu/d3-workshop/examples/session4/boston-slider-map.html"></iframe>
+			<div class="caption" style="text-align: center">
+				<h5>Slider Map - Rodent Incidents by Month, 311 Reports <small><br>Data Source: <a href="https://data.cityofboston.gov/">City of Boston Open Data</a></small></h5>
+			</div>
+		</div>
+
+		<p>From here, perhaps we can add a coordinated bar chart or scatterplot, that updates using the same triggers, or continue to expand up functionality of the map by adding more filtering options.</p>
+		<h4>Add More Supplemental Information to the Map</h4>
+		<p>At this point, our map is nice, but we could make it more informative. We don't have a date, legend, or any supplemental information on here. CHALLENGE, can you add a date to the changing popup text?</p>
+		<hr>
+		<h3>Part 2: Using TopoJSON and 'Joining Data'</h3>
+		<h4>Introducing TopoJSON</h4>
+		<p>D3 works with two types of geographic JSON, <a href="http://geojson.org/">GeoJSON</a>, and a format called <a href="https://github.com/mbostock/topojson">TopoJSON</a>.
+		<h3>GeoJSON vs. TopoJSON</h3>
+		<p>TopoJSON is an extension of GeoJSON that encodes topology. Rather than representing geometries discretely, geometries in TopoJSON files are stitched together from shared line segments called arcs. This technique is similar to Matt Bloch’s MapShaper and the Arc/Info Export format, .e00. TopoJSON eliminates redundancy, allowing related geometries to be stored efficiently in the same file. For example, the shared boundary between California and Nevada is represented only once, rather than being duplicated for both states. A single TopoJSON file can contain multiple feature collections without duplication, such as states and counties. (<a href="https://github.com/mbostock/topojson/wiki">TopoJSON wiki</a>)</p>
+		<p>As a result, TopoJSON is substantially more compact than GeoJSON. The above shapefile of U.S. counties is 2.2M as a GeoJSON file, but only 436K as a boundary mesh, a reduction of 80.4% even without simplification.<a href="#citation3"><sup>3</sup></a></p>
+<p>In order to use TopoJSONs, you have to add an extra <a href="https://github.com/mbostock/topojson" target="_blank">TopoJSON library</a> to your document that contains the necessary components and methods. In the head, after you load D3, load the TopoJSON library using the following.</p>
+<pre><code class="language-markup">&lt;script src="http://d3js.org/topojson.v1.min.js"&gt;&lt;/script&gt;</code></pre>
+<p>Structure of a TopoJSON</p>
+		<div class="text-center">
+			<img src="http://duspviz.mit.edu/_assets/img/topojson.png" width="720px"></a>
+			<div class="caption" style="text-align: center">
+				<h5>TopoJSON of U.S. Counties<br><small>Source: <a href="https://github.com/mbostock/topojson/wiki">TopoJSON Wiki - Mike Bostock</a></small></h5>
+			</div>
+		</div>
+<h4>Sample TopoJSON Code</h4>
+<p>For example TopoJSON code, check out the following TopoJSON documentation.</p>
+<a href="https://github.com/mbostock/topojson-specification/blob/master/README.md#11-examples" target="_blank">TopoJSON Specification Documentation</a>
+		<hr>
+		<h3>Make a Choropleth Map of U.S. Counties</h3>
+		<p>The following will detail, from the ground up, using TopoJSON and building a choropleth map with 'joined data' from the bottom up.</p>
+		<div class="text-center">
+			<iframe scrolling="no" width="720" height="500" src="http://duspviz.mit.edu/d3-workshop/examples/session4/threshold-unemployment-v1.html"></iframe>
+			<div class="caption" style="text-align: center">
+				<h5>County TopoJSON </h5>
+			</div>
+		</div>
+		<p>What is going on here? Let's look at the code.</p>
+		<p><strong>In your folder, start up a new blank file. Call this one something different, like <em>index2.html</em></strong></p>
+		<hr>
+		<p>In your blank document, input the following.</p>
+		<h4>1. HTML Template</h4>
+		<p>A simple HTML template for our page.</p>
+		<pre><code class="language-markup">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+	&lt;title&gt;Mapping with D3&lt;/title&gt;
+	&lt;script src="http://d3js.org/d3.v4.min.js" charset="utf-8"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;!-- Page elements and content go here. --&gt;
+	&lt;script&gt;
+		// Our D3 code will go here.
+	&lt;/script&gt;	
+&lt;/body&gt;
+&lt;/html&gt;</pre></code>
+		<hr>
+		<h4>2. Add Additional D3 Modules for Mapping</h4>
+		<p>TopoJSON is an extra addon of D3, so we need to add it to our code. We are also going to use something called d3-queue. This will load datasets one by one, and then run a function when they are all loaded. This easily allows us to work with multiple datasets from different sources in the same visualization.</p>
+		<p>Add them using the following, in the head part of your HTML.</p>
+		<pre data-line="6-7"><code class="language-markup">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+	&lt;title&gt;Mapping with D3&lt;/title&gt;
+	&lt;script src="http://d3js.org/d3.v4.min.js" charset="utf-8"&gt;&lt;/script&gt;
+	&lt;script src="http://d3js.org/topojson.v1.min.js"&gt;&lt;/script&gt;
+	&lt;script src="https://d3js.org/d3-queue.v2.min.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;!-- Page elements and content go here. --&gt;
+	&lt;script&gt;
+		// Our D3 code will go here.
+	&lt;/script&gt;	
+&lt;/body&gt;
+&lt;/html&gt;</pre></code>
+		<hr>
+		<h4>3. Set up the Map</h4>
+		<p>Use D3 to set up your map. We did this above, so you have an understanding for what is happening now. Enter the following code into your document in the script section of the code.</p>
+<pre><code class="language-javascript">var width = 720,
+    height = 500;
+
+var projection = d3.geoAlbers()
+    .scale(1000)
+    .translate([width / 2, height / 2]);
+
+var path = d3.geoPath()
+    .projection(projection);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);</code></pre>
+    	<hr>
+		<h4>4. Queue Up the Datasets</h4>
+		<p>D3 queue waits to run your script until all outside resources (aka datasets) are loaded into your visualization. Waiting for everything to load prevents errors from occuring. In the <strong>queue</strong> method, we can use <a href="https://github.com/mbostock/d3/wiki/Arrays#maps" target="_blank">d3 maps</a> to group the data, then we will set the "fill" returning our "grouped" data when we create SVG elements, calling the property we want to join on. Once the resources are loaded, we can call a function that runs when ready using await. Set the <strong>ready</strong> function to read our data as arguments. we can do alot with them, including join them based on like attributes.</p>
+		<p><strong>2. Bind Data from TopoJSON</strong></p>
+		<p>Here is our queue, and the creation of our county SVG elements. <strong>Input this into our script, after the SVG canvas creation</strong>.</p>
+<pre><code class="language-javascript">// Queue up datasets using d3 Queue
+queue()
+    .defer(d3.json, "data/us.json") // Load US Counties
+    .await(ready); // Run 'ready' when JSONs are loaded</code></pre>
+    	<hr>
+		<h4>4. Create the Ready Function to Draw the Visualization</h4>
+		<p>D3 queue waits to run your script until all outside resources (aka datasets) are loaded into your visualization. Waiting for everything to load prevents errors from occuring. In the <strong>queue</strong> method, we can use <a href="https://github.com/mbostock/d3/wiki/Arrays#maps" target="_blank">d3 maps</a> to group the data, then we will set the "fill" returning our "grouped" data when we create SVG elements, calling the property we want to join on. Once the resources are loaded, we can call a function that runs when ready using await. Set the <strong>ready</strong> function to read our data as arguments. we can do alot with them, including join them based on like attributes.</p>
+<pre><code class="language-javascript">// Ready Function, runs when data is loaded
+function ready(error, us) {
+  if (error) throw error;
+  
+  svg.append("g")
+      .attr("class", "counties")
+    .selectAll("path")
+      .data(topojson.feature(us, us.objects.counties).features) // Bind TopoJSON data elements
+    .enter().append("path")
+      .attr("d", path)
+      .style("fill", "white")
+      .style("stroke", "black");
+}</code></pre>
+    	<p>In this function, we pass our data (the TopoJSON) as an argument, then create SVG elements using a classic D3 append. Selecting all paths, the TopoJSON is bound in the data method. From here, we can perform work on each element. In this circumstance, we apply a fill and stroke.</p>
+		<div class="text-center">
+			<iframe scrolling="no" width="720" height="500" src="http://duspviz.mit.edu/d3-workshop/examples/session4/threshold-unemployment-v1.html"></iframe>
+			<div class="caption" style="text-align: center">
+				<h5>County TopoJSON </h5>
+			</div>
+		</div>
+		<hr>
+		<h3>Joining Data: Create a Choropleth</h3>
+		<p>Continuing with this example, let's join a TSV of unemployment data to our counties. Joining in D3 is a bit different than traditional GIS, but will have some similarities. We need to add our dataset to the queue, </p>
+		<h4>1. Add TSV to the Queue</h4>
+		<p>First, add our TSV to the queue so it loads into our visualization and add a parameter to our ready function for unemployment.</p>
+<pre data-line="3,6"><code class="language-javascript">queue()
+    .defer(d3.json, "data/us.json")
+    .defer(d3.tsv, "data/unemployment.tsv") // Load Unemployment TSV
+    .await(ready);
+
+function ready(error, us, unemployment) { // Add parameter for unemployment
+  if (error) throw error;
+  
+  svg.append("g")
+      .attr("class", "counties")
+    .selectAll("path")
+      .data(topojson.feature(us, us.objects.counties).features)
+    .enter().append("path")
+      .attr("d", path)
+      .style("fill", "white")
+      .style("stroke", "black");
+}</code></pre>
+		<p>This passes our unemployment dataset to the ready function, where we can parse it and send values to the polygons using the fill property.</p>
+		<hr>
+		<h4>2. Create Object for the Tabular Dataset</h4>
+		<p>We need to create an object for our tabular dataset, then, in this object, create properties for each county ID. We want to give the value of each property the corresponding rate. The D3 TSV object loads our data as an array. Using <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for_each...in">forEach</a> in our array, we create our object. The code looks like the following.</p>
+<pre data-line="4-7"><code class="language-javascript">function ready(error, us, unemployment) {
+  if (error) throw error;
+
+  var rateById = {}; // Create empty object for holding dataset
+  unemployment.forEach(function(d) {
+    rateById[d.id] = +d.rate; // Create property for each ID, give it value from rate
+  });
+  
+  svg.append("g")
+      .attr("class", "counties")
+    .selectAll("path")
+      .data(topojson.feature(us, us.objects.counties).features)
+    .enter().append("path")
+      .attr("d", path)
+      .style("fill", "white")
+      .style("stroke", "black");
+}</code></pre>
+		<p>Console log <strong>rateById</strong> to check it out. We now have a JavaScript object with each county as a property, and the rate as the value of the property.</p>
+		<hr>
+		<h4>3. Classify by creating a Color function using d3.scale</h4>
+		<p>Next we classify our unemployment data into categories. D3 has a couple of different methods for doing this that are written into the <a href="https://github.com/d3/d3-scale/blob/master/README.md#api-reference">d3-scale</a> module. These include continuous, quantize, quantile, ordinal, and threshold methods. The threshold method allows us to set our own class breaks, so we'll use that. (NOTE: You'll probably want to look at a histogram of your data to check out your breaks.) There are also some classic geographic methods, such as <a href="https://en.wikipedia.org/wiki/Jenks_natural_breaks_optimization" target="_blank">Jenks Natural Breaks</a>, that can be implemented using a library called <a href="https://github.com/simple-statistics/simple-statistics" target="_blank">Simple Statistics</a>. An example for this will be found at the end of this exercise.</p>
+		<p>To use scale in D3, we create an function expression using the <a href="https://github.com/d3/d3-scale/blob/master/README.md#threshold-scales" target="_blank">d3.scaleThreshold()</a> method. Separate from your <strong>queue</strong> and <strong>ready</strong> functions, implement your scale. This takes the domain and range principles learned in the first session, and applies them using color. As a reminder:</p>
+		<div>
+			<img class="img-responsive center-block" src="http://duspviz.mit.edu/_assets/img/domain-range.png" />
+			<div class="caption" style="text-align: center">
+		    	<h5>Scales: Domain and Range <small><a href="http://alignedleft.com/tutorials/d3/scales" target="_blank">Scott Murray</a></small></h5>
+			</div>
+		</div>
+		<p>The code for our domain and range using the threshold method looks like the following. The class breaks are taken from a look at a histogram, and using cartographic principles of logical round numbers that will make your map easier to read for the viewer. Here is the code.</p>
+<pre><code class="language-javascript">var color = d3.scaleThreshold()
+    .domain([0.02, 0.04, 0.06, 0.08, 0.10])
+    .range(["#f2f0f7", "#dadaeb", "#bcbddc", "#9e9ac8", "#756bb1", "#54278f"]);</code></pre>
+		<hr>
+		<h4>4. Use the Color Function to set the Fill Value for each Polygon</strong></h4>
+		<p>Adjust the fill property of the append statement to use the color function. The color function takes the value found in the rateById object for the property that matches the ID value of the counties dataset (<strong>d.id</strong>). To illustrate this, throw in a console.log on <strong>d</strong>, or <strong>d.id</strong>. The return value is a number that is then run through our threshold scale, return a hex code for color based on what value is received. Here is the code, note the fill property.</p>
+<pre data-line="7-10"><code class="language-javascript">svg.append("g")
+	.attr("class", "counties")
+	.selectAll("path")
+	.data(topojson.feature(us, us.objects.counties).features)
+	.enter().append("path")
+	.attr("d", path)
+	.style("fill", function(d) {
+		return color(rateById[d.id]); // get rate value for property matching data ID
+		// pass rate value to color function, return color based on domain and range
+	})
+	.style("stroke", "black");</code></pre>
+		<p>View our map. Our scale and fill properties set each polygon on the map to the color we designated.</p>
+		<div class="text-center">
+			<iframe scrolling="no" width="720" height="500" src="http://duspviz.mit.edu/d3-workshop/examples/session4/threshold-unemployment-v3.html"></iframe>
+			<div class="caption" style="text-align: center">
+				<h5>Classified and Colored Counties </h5>
+		</div>
+		</div>
+		<p>For some tips on what colors to use, check out the <a href="http://duspviz.mit.edu/resources/#design">DUSPviz Color Resource page</a>.
+		<hr>
+		<h4>5. Remove that County Stroke and Add State Outlines</strong></h4>
+		<p>Polish our map a bit by removing the thick black stroke on each county. Simply remove the stroke property of our append.</p>
+<pre data-line="7-10"><code class="language-javascript">svg.append("g")
+	.attr("class", "counties")
+	.selectAll("path")
+	.data(topojson.feature(us, us.objects.counties).features)
+	.enter().append("path")
+	.attr("d", path)
+	.style("fill", function(d) {
+		return color(rateById[d.id]); // get rate value for property matching data ID
+		// pass rate value to color function, return color based on domain and range
+	});</code></pre>
+		<p>Next, use append one more time simply to create state outlines. Here, we want to use the <a href="https://github.com/mbostock/topojson/wiki/api-reference#mesh">topojson.mesh</a> method to simplify our strokes. This method iterates through each line of geometry that is shared by multiple features. The filter function as the third argument is called for each geometry and takes two arguments representing the two geometry objects that share the arc. Each arc is only included in the mesh if the return to this function is true. An arc used by the same geometry are identical.</p>
+		<p>The code looks as follows, and only geometries with different ids will be returned and given a class of 'states'. The style for 'states' is then written up in the CSS as a white stroke.</p>
+<pre><code class="language-javascript">svg.append("path")
+	.datum(topojson.mesh(us, us.objects.states, function(a, b) {
+		return a.id !== b.id;
+	}))
+	.attr("class", "states")
+	.attr("d", path);</code></pre>
+		<p>Refresh your map. You just created a choropleth map of unemployment in the United States.</p>
+		<div class="text-center">
+			<iframe scrolling="no" width="720" height="500" src="http://duspviz.mit.edu/d3-workshop/examples/session4/threshold-unemployment-v4.html"></iframe>
+			<div class="caption" style="text-align: center">
+				<h5>County Choropleth Map </h5>
+		</div>
+		</div>
+		<p>This should give you a better understanding of TopoJSON, the differences with GeoJSON, and how you join and map datasets using D3.</p>
+		<hr>
+		<h3>Supplement: Additional Useful Examples</h3>
+		<p>The next sections will show some additional examples of Choropleth creation, TopoJSON, data joining, and some other methods you can use to animate a map over time. For a nice succinct example, I will draw you to a map created by <a href="https://twitter.com/rgdonohue">Rich Donohue</a> at the University of Kentucky. It uses a JavaScript library called <a href="https://github.com/simple-statistics/simple-statistics">Simple-Statistics</a> to utilize Jenks Natural Breaks algorithm for our classification scheme.</p>
+		<div class="text-center">
+			<iframe scrolling="no" width="850" height="500" src="http://duspviz.mit.edu/d3-workshop/examples/session4/example5.html"></iframe>
+			<div class="caption" style="text-align: center">
+				<h5>Kentucky Gas Wells </h5>
+			</div>
+		</div>
+		<p>This example takes a geographic dataset (the county JSON file), and joins a tabular dataset When you view source, the code on the whole should be similar to the Boston map above. There are a couple of key things to point out that might look unfamiliar. View source and check out the code.<a href="#citation2"><sup>2</sup></a></p>
+<p>The TopoJSON is appended to our dataset are in the append method, highlighted below in line 3 of our code.</p>
+<pre data-line="3, 8-9"><code class="language-javascript">svg.append("g")
+    .selectAll("path")
+    .data( topojson.feature(counties, counties.objects.counties).features)
+    .enter()
+    .append("path")
+    .attr( "d", geoPath )
+    .attr("class","county")
+    .attr( "fill", function(d){
+        return jenks(d.properties[attribute]/d.properties.ALAND);</code></pre>
+        <h4>Classification</h4>
+        <p>In this example, the Jenks classification scheme was used. In order to use Jenks with D3, you can use a library of statistical methods in readable JavaScript called <a href="http://simplestatistics.org/">Simple Statistics. An example on how this is used with D3 was created by <a href="https://twitter.com/tmcw">Tom Macwright and can be <a href="http://bl.ocks.org/tmcw/4969184">found here</a>.</p>
+    	<p>Quantize values are set a bit differently than Jenks or Threshold they can be found in the following examples from Mike Bostock.</p>
+
+    	<ul>
+        	<li><a href="http://bl.ocks.org/mbostock/4060606">Quantile Choropleth Mapping Example and Code</a></li>
+        </ul>
+		<h4>Temporal Animations and Transitions</h4>
+		<p>Map animations are accomplished using transitions, just like in the charts and graphs in the previous exercise. One interest you might have is in animating a map over time. The next section showcases examples you can look through to help you with temporal animation. Time animation requires a few extra steps. You have to create button(s) to control your animation, then change the animation by using transitions and property changes when the button is clicked or play is hit.</p>
+		<h4>Some Examples</h4>
+		<h5>A Temporal World Map</h5>
+		<p>Rich Donohue also created a fantastic and simple map demonstrating how to drawn a choropleth map and sequence through data of hypothetical timestamps. Comments in the code clearly illustrate the steps taken to create a nice transition based temporal world map.</p>
+		<a href="http://bl.ocks.org/rgdonohue/9280446">View the example and read through the code. It is nicely commented to describe to you what is going on at each step in the process and creation of the D3 map.</a>
+		<h4>Animating a Path</h4>
+		<p>Animating a path can be done in a similar manner as animating a chart. The following example, from the Times, provides a nice, clean map with animated lines.</p>
+		<div class="text-center">
+			<a href="http://www.nytimes.com/interactive/2013/09/25/sports/americas-cup-course.html"><img src="http://duspviz.mit.edu/_assets/img/americas-cup.png" width="720px"></a>
+			<div class="caption" style="text-align: center">
+				<h5>The America’s Cup Finale: Oracle’s Path to Victory<br><small>Source: <a href="http://www.nytimes.com/interactive/2013/09/25/sports/americas-cup-course.html">New York Times</a></small></h5>
+			</div>
+		</div>
+		<hr>
+	<h4>Make Maps!</h4>
+	<p>The functionality of D3 lends itself to the creation of all kinds of fantastic maps and graphics. Go forth and make awesome maps.</p>
+	<hr>
+	<h4>Additional Resources and References</h4>
+	<p id="citation1"><sup>1</sup> - Mapping with D3 - MaptimeBoston - <a href="http://maptimeboston.github.io/d3-maptime">http://maptimeboston.github.io/d3-maptime</a></p>
+	<p id="citation2"><sup>2</sup> - Introduction to D3 Web Mapping Through 7 Simple Maps - Rich Donohue - <a href="https://github.com/maptimelex/d3-mapping">https://github.com/maptimelex/d3-mapping</a></p>
+	<p id="citation3"><sup>3</sup> - TopoJSON - Mike Bostock - <a href="https://github.com/mbostock/topojson/wiki">https://github.com/mbostock/topojson/wiki</a></p>
+	<p id="citation4"><sup>4</sup> - Create D3 Choropleth Dataset - Stack Overflow - <a href="http://stackoverflow.com/questions/17639755/create-d3-choropleth-dataset">http://stackoverflow.com/questions/17639755/create-d3-choropleth-dataset</a></p>
+	<hr>
+	</div>
+</div><!--/right-->
+
+		<!-- Script References -->
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+		<script src="http://duspviz.mit.edu/_assets/js/bootstrap.min.js"></script>
+		<script src="http://duspviz.mit.edu/_assets/lib/prism.js"></script>
+		<script src="http://duspviz.mit.edu/_assets/js/jquery.easing.min.js"></script>
+		<script src="http://duspviz.mit.edu/_assets/js/scrolling-nav.js"></script>
+		<script src="http://duspviz.mit.edu/_assets/js/scripts.js"></script>
+
+	</body>
+
+</html>
